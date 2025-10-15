@@ -84,9 +84,7 @@ Users.csv: Contains user information (User-ID, etc.)
     - Cell 6: Define the get_recommends function to return similar books.
     - Cell 7: Test the function with the provided test case.
 5. If the test fails, debug the get_recommends function by checking:
-    Data filtering logic (thresholds for users and books)
-KNN model parameters (e.g., distance metric, number of neighbors)
-Handling of edge cases (e.g., book not found in dataset)
+6. 
 ---
 
 ## Contributing
