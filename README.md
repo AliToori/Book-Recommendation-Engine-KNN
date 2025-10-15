@@ -91,7 +91,7 @@ Users.csv: Contains user information (User-ID, etc.)
 
 ## Contributing
 Contributions are welcome! To contribute:
-1. Fork the repository (if you export the notebook to GitHub): https://github.com/AliToori/Book-Recommendation-Engine-KNN
+1. Fork the repository (if you export the notebook to GitHub): https://github.com/AliToori/Cat-Dog-Image-Classifier
 2. Create a feature branch (`git checkout -b feature-name`).
 3. Commit changes (`git commit -m "Add feature"`).
 4. Push to the branch (`git push origin feature-name`).
