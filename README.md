@@ -86,7 +86,7 @@ Users.csv: Contains user information (User-ID, etc.)
 5. If the test fails, debug the get_recommends function by checking:
     - Data filtering logic (thresholds for users and books)
     - KNN model parameters (e.g., distance metric, number of neighbors)
-    Handling of edge cases (e.g., book not found in dataset)
+    - Handling of edge cases (e.g., book not found in dataset)
 ---
 
 ## Contributing
