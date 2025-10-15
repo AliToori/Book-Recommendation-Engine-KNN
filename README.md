@@ -78,11 +78,11 @@ Users.csv: Contains user information (User-ID, etc.)
 2. Save a copy to your Google Drive (**File > Save a copy in Drive**).
 3. Enable GPU for faster training (**Runtime > Change runtime type > GPU**).
 4. Run all cells sequentially:
-    - Cells 1-3: Import libraries and load the Book-Crossings dataset.
+   - Cells 1-3: Import libraries and load the Book-Crossings dataset.
     - Cell 4: Preprocess data (filter users and books based on rating thresholds).
     - Cell 5: Create a pivot table of user-book ratings and fit the KNN model.
     - Cell 6: Define the get_recommends function to return similar books.
-    - Cell 7: Test the function with the provided test case.
+    Cell 7: Test the function with the provided test case.
 5. If accuracy is low, adjust epochs (e.g., 20-30), batch size (e.g., 32), or model architecture (e.g., add Conv2D layers).
 
 ---
