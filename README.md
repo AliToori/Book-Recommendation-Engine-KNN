@@ -57,7 +57,6 @@ Example output for `get_recommends("The Queen of the Damned (Vampire Chronicles 
 
 ## 📂 Project Structure
 The project is a single Google Colab notebook (fcc_book_recommendation_knn.ipynb) with cells for:
-
 * Importing libraries (scikit-learn, Pandas, etc.)
 * Loading and preprocessing the Book-Crossings dataset
 * Filtering users (<200 ratings) and books (<100 ratings)
@@ -67,14 +66,9 @@ The project is a single Google Colab notebook (fcc_book_recommendation_knn.ipynb
 
 Dataset structure:
 ```bash
-cats_and_dogs/
-├── train/
-│   ├── cats/ [cat.0.jpg, cat.1.jpg, ...]
-│   ├── dogs/ [dog.0.jpg, dog.1.jpg, ...]
-├── validation/
-│   ├── cats/ [cat.2000.jpg, cat.2001.jpg, ...]
-│   ├── dogs/ [dog.2000.jpg, dog.2001.jpg, ...]
-├── test/ [1.jpg, 2.jpg, ...]
+Books.csv: Contains book metadata (ISBN, title, etc.)
+Ratings.csv: Contains user ratings (User-ID, ISBN, rating)
+Users.csv: Contains user information (User-ID, etc.)
 ```
 
 ---
