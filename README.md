@@ -7,7 +7,7 @@ This project implements a book recommendation system using the K-Nearest Neighbo
 👨‍💻 **Author**: Ali Toori – Full-Stack Python Developer  
 📺 **YouTube**: [@AliToori](https://youtube.com/@AliToori)  
 💬 **Telegram**: [@AliToori](https://t.me/@AliToori)  
-📂 **GitHub**: [github.com/AliToori](https://github.com/AliToori)
+📂 **GitHub**: [Github.com/AliToori](https://github.com/AliToori)
 
 ---
 
