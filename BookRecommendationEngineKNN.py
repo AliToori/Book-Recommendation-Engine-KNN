@@ -1,101 +1,104 @@
-# Cell 1: Import libraries
 import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
 from sklearn.neighbors import NearestNeighbors
-import matplotlib.pyplot as plt
-
-# Cell 2: Get data files
-!wget
-https: // cdn.freecodecamp.org / project - data / books / book - crossings.zip
-
-!unzip
-book - crossings.zip
-
-books_filename = 'BX-Books.csv'
-ratings_filename = 'BX-Book-Ratings.csv'
-
-# Cell 3: Import csv data into dataframes
-df_books = pd.read_csv(
-    books_filename,
-    encoding="ISO-8859-1",
-    sep=";",
-    header=0,
-    names=['isbn', 'title', 'author'],
-    usecols=['isbn', 'title', 'author'],
-    dtype={'isbn': 'str', 'title': 'str', 'author': 'str'})
-
-df_ratings = pd.read_csv(
-    ratings_filename,
-    encoding="ISO-8859-1",
-    sep=";",
-    header=0,
-    names=['user', 'isbn', 'rating'],
-    usecols=['user', 'isbn', 'rating'],
-    dtype={'user': 'int32', 'isbn': 'str', 'rating': 'float32'})
-
-# Cell 4: Preprocess the dataset
-# Filter users with at least 200 ratings
-user_counts = df_ratings['user'].value_counts()
-df_ratings = df_ratings[df_ratings['user'].isin(user_counts[user_counts >= 200].index)]
-
-# Filter books with at least 100 ratings
-book_counts = df_ratings['isbn'].value_counts()
-df_ratings = df_ratings[df_ratings['isbn'].isin(book_counts[book_counts >= 100].index)]
-
-# Merge ratings with book titles
-df = df_ratings.merge(df_books[['isbn', 'title']], on='isbn')
-
-# Create a pivot table of users vs. books with ratings as values
-pivot_table = df.pivot_table(index='title', columns='user', values='rating').fillna(0)
-
-# Convert to sparse matrix for efficiency
-sparse_matrix = csr_matrix(pivot_table.values)
-
-# Cell 5: Fit the KNN model
-model = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=6)
-model.fit(sparse_matrix)
 
 
-# Cell 6: Function to return recommended books
-def get_recommends(book=""):
-    # Check if the book exists in the dataset
-    if book not in pivot_table.index:
-        print(f"Book '{book}' not found in dataset")
-        return [book, []]
+class BookRecommender:
+    def __init__(self, books_file='BX-Books.csv', ratings_file='BX-Book-Ratings.csv'):
+        """Initialize the recommender with dataset file paths and load data."""
+        self.books_file = books_file
+        self.ratings_file = ratings_file
+        self.df_books = None
+        self.df_ratings = None
+        self.pivot_table = None
+        self.sparse_matrix = None
+        self.model = None
+        self.load_data()
+        self.preprocess_data()
+        self.train_model()
 
-    # Get the index of the book in the pivot table
-    book_idx = pivot_table.index.get_loc(book)
+    def load_data(self):
+        """Load the Book-Crossings dataset into dataframes."""
+        self.df_books = pd.read_csv(
+            self.books_file,
+            encoding="ISO-8859-1",
+            sep=";",
+            header=0,
+            names=['isbn', 'title', 'author'],
+            usecols=['isbn', 'title', 'author'],
+            dtype={'isbn': 'str', 'title': 'str', 'author': 'str'}
+        )
 
-    # Find the 6 nearest neighbors (including the book itself)
-    distances, indices = model.kneighbors(sparse_matrix[book_idx], n_neighbors=6)
+        self.df_ratings = pd.read_csv(
+            self.ratings_file,
+            encoding="ISO-8859-1",
+            sep=";",
+            header=0,
+            names=['user', 'isbn', 'rating'],
+            usecols=['user', 'isbn', 'rating'],
+            dtype={'user': 'int32', 'isbn': 'str', 'rating': 'float32'}
+        )
 
-    # Prepare the list of recommended books with distances
-    recommended_books = []
-    for i in range(1, 6):  # Get top 5 neighbors (skip the book itself)
-        neighbor_idx = indices[0][i]
-        neighbor_title = pivot_table.index[neighbor_idx]
-        neighbor_distance = distances[0][i]
-        recommended_books.append([neighbor_title, float(neighbor_distance)])
+    def preprocess_data(self):
+        """Filter users and books, merge data, and create pivot table."""
+        # Filter users with at least 200 ratings
+        user_counts = self.df_ratings['user'].value_counts()
+        self.df_ratings = self.df_ratings[self.df_ratings['user'].isin(user_counts[user_counts >= 200].index)]
 
-    # Sort by distance (descending) to match test case
-    recommended_books = sorted(recommended_books, key=lambda x: x[1], reverse=True)
+        # Filter books with at least 100 ratings
+        book_counts = self.df_ratings['isbn'].value_counts()
+        self.df_ratings = self.df_ratings[self.df_ratings['isbn'].isin(book_counts[book_counts >= 100].index)]
 
-    # Debug: Print recommendations
-    print(f"Recommendations for '{book}': {recommended_books}")
+        # Merge ratings with book titles
+        df = self.df_ratings.merge(self.df_books[['isbn', 'title']], on='isbn')
 
-    return [book, recommended_books]
+        # Create a pivot table of users vs. books with ratings as values
+        self.pivot_table = df.pivot_table(index='title', columns='user', values='rating').fillna(0)
+
+        # Convert to sparse matrix for efficiency
+        self.sparse_matrix = csr_matrix(self.pivot_table.values)
+
+    def train_model(self):
+        """Train the KNN model using cosine distance."""
+        self.model = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=6)
+        self.model.fit(self.sparse_matrix)
+
+    def get_recommends(self, book=""):
+        """Return 5 recommended books with distances for the given book title."""
+        # Check if the book exists in the dataset
+        if book not in self.pivot_table.index:
+            print(f"Book '{book}' not found in dataset")
+            return [book, []]
+
+        # Get the index of the book in the pivot table
+        book_idx = self.pivot_table.index.get_loc(book)
+
+        # Find the 6 nearest neighbors (including the book itself)
+        distances, indices = self.model.kneighbors(self.sparse_matrix[book_idx], n_neighbors=6)
+
+        # Prepare the list of recommended books with distances
+        recommended_books = []
+        for i in range(1, 6):  # Get top 5 neighbors (skip the book itself)
+            neighbor_idx = indices[0][i]
+            neighbor_title = self.pivot_table.index[neighbor_idx]
+            neighbor_distance = float(distances[0][i])
+            recommended_books.append([neighbor_title, neighbor_distance])
+
+        # Sort by distance (descending) to match test case
+        recommended_books = sorted(recommended_books, key=lambda x: x[1], reverse=True)
+
+        # Debug: Print recommendations
+        print(f"Recommendations for '{book}': {recommended_books}")
+
+        return [book, recommended_books]
 
 
-# Cell 7: Test the function
-books = get_recommends("Where the Heart Is (Oprah's Book Club (Paperback))")
-print(books)
-
-
-# Cell 8: Test book recommendation
 def test_book_recommendation():
+    """Test the recommendation function for the challenge."""
+    recommender = BookRecommender()
     test_pass = True
-    recommends = get_recommends("Where the Heart Is (Oprah's Book Club (Paperback))")
+    recommends = recommender.get_recommends("Where the Heart Is (Oprah's Book Club (Paperback))")
     if recommends[0] != "Where the Heart Is (Oprah's Book Club (Paperback))":
         test_pass = False
     recommended_books = ["I'll Be Seeing You", 'The Weight of Water', 'The Surgeon', 'I Know This Much Is True']
@@ -114,4 +117,5 @@ def test_book_recommendation():
         print("You haven't passed yet. Keep trying!")
 
 
-test_book_recommendation()
+if __name__ == "__main__":
+    test_book_recommendation()
