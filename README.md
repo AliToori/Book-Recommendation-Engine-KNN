@@ -74,15 +74,20 @@ Users.csv: Contains user information (User-ID, etc.)
 ---
 
 ## Usage
-1. Open the provided Colab notebook: https://colab.research.google.com/github/freeCodeCamp/boilerplate-book-recommendation-engine/blob/master/fcc_book_recommendation_knn.ipynb
+1. Open the provided Colab notebook: https://colab.research.google.com/github/freeCodeCamp/boilerplate-cat-and-dog-image-classifier/blob/master/fcc_cat_dog.ipynb
 2. Save a copy to your Google Drive (**File > Save a copy in Drive**).
 3. Enable GPU for faster training (**Runtime > Change runtime type > GPU**).
 4. Run all cells sequentially:
-   - Cells 1-3: Import libraries and load the Book-Crossings dataset.
-    - Cell 4: Preprocess data (filter users and books based on rating thresholds).
-    Cell 5: Create a pivot table of user-book ratings and fit the KNN model.
-    Cell 6: Define the get_recommends function to return similar books.
-    Cell 7: Test the function with the provided test case.
+   - Cells 1-2: Import libraries and download dataset (~67MB).
+   - Cell 3: Set up `ImageDataGenerator` for train/validation/test (rescale, `flow_from_directory`).
+   - Cell 4: Visualize sample training images.
+   - Cell 5: Add augmentation to training generator.
+   - Cell 6: Visualize augmented images.
+   - Cell 7: Build and compile CNN (Conv2D, MaxPooling, Dense).
+   - Cell 8: Train model (15 epochs, adjustable).
+   - Cell 9: Plot accuracy/loss curves.
+   - Cell 10: Predict test set probabilities and visualize.
+   - Cell 11: Check if accuracy >=63%.
 5. If accuracy is low, adjust epochs (e.g., 20-30), batch size (e.g., 32), or model architecture (e.g., add Conv2D layers).
 
 ---
