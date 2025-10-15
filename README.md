@@ -44,6 +44,7 @@ Example output for `get_recommends("The Queen of the Damned (Vampire Chronicles 
 
 ## 🛠 Tech Stack
 * Language: Python 3.8+
+
 * Libraries:
 scikit-learn (for KNN with NearestNeighbors)
 Pandas (for data preprocessing and manipulation)
