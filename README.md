@@ -45,10 +45,10 @@ Example output for `get_recommends("The Queen of the Damned (Vampire Chronicles 
 ## 🛠 Tech Stack
 * Language: Python 3.8+
 * Libraries:
-  scikit-learn (for KNN with NearestNeighbors)
-    Pandas (for data preprocessing and manipulation)
-    NumPy (for numerical operations)
-    Matplotlib/Seaborn (optional, for dataset visualization)
+  * TensorFlow 2.0+ (for CNN and image processing)
+  * Keras (for model building)
+  * Matplotlib (for visualizing images and training metrics)
+  * NumPy (for array operations)
 * Tools:
   * Google Colab for development, training, and testing (with GPU support)
   * GitHub for version control (optional, if you export the notebook)
