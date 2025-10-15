@@ -1,67 +1,117 @@
-import random
+# Cell 1: Import libraries
+import numpy as np
+import pandas as pd
+from scipy.sparse import csr_matrix
+from sklearn.neighbors import NearestNeighbors
+import matplotlib.pyplot as plt
 
-def player(prev_play, opponent_history=[]):
-    # Initialize histories if empty
-    if not opponent_history:
-        opponent_history.clear()
-        player.my_history = []
+# Cell 2: Get data files
+!wget
+https: // cdn.freecodecamp.org / project - data / books / book - crossings.zip
 
-    # Append opponent's previous play to history
-    opponent_history.append(prev_play)
-    my_history = player.my_history
+!unzip
+book - crossings.zip
 
-    # Define counters for each move
-    counter_moves = {"R": "P", "P": "S", "S": "R"}
+books_filename = 'BX-Books.csv'
+ratings_filename = 'BX-Book-Ratings.csv'
 
-    # Helper function to get most frequent move in a history slice
-    def most_frequent(history, n=10):
-        if not history:
-            return random.choice(["R", "P", "S"])
-        recent = history[-n:] if len(history) >= n else history
-        counts = {"R": 0, "P": 0, "S": 0}
-        for move in recent:
-            counts[move] += 1
-        max_count = max(counts.values())
-        most_common = [move for move, count in counts.items() if count == max_count]
-        return random.choice(most_common)
+# Cell 3: Import csv data into dataframes
+df_books = pd.read_csv(
+    books_filename,
+    encoding="ISO-8859-1",
+    sep=";",
+    header=0,
+    names=['isbn', 'title', 'author'],
+    usecols=['isbn', 'title', 'author'],
+    dtype={'isbn': 'str', 'title': 'str', 'author': 'str'})
 
-    # Default move for the first game or if no pattern is detected
-    guess = random.choice(["R", "P", "S"])
+df_ratings = pd.read_csv(
+    ratings_filename,
+    encoding="ISO-8859-1",
+    sep=";",
+    header=0,
+    names=['user', 'isbn', 'rating'],
+    usecols=['user', 'isbn', 'rating'],
+    dtype={'user': 'int32', 'isbn': 'str', 'rating': 'float32'})
 
-    # Identify opponent based on move patterns
-    if len(opponent_history) >= 5:
-        # Quincy: Check for repeating sequence R, P, P, S, R
-        quincy_sequence = ["R", "P", "P", "S", "R"]
-        is_quincy = True
-        for i in range(min(len(opponent_history), 5)):
-            if opponent_history[-i-1] != quincy_sequence[-(i % 5 + 1)]:
-                is_quincy = False
-                break
-        if is_quincy:
-            next_quincy = quincy_sequence[len(opponent_history) % 5]
-            guess = counter_moves[next_quincy]
+# Cell 4: Preprocess the dataset
+# Filter users with at least 200 ratings
+user_counts = df_ratings['user'].value_counts()
+df_ratings = df_ratings[df_ratings['user'].isin(user_counts[user_counts >= 200].index)]
 
-        # Kris: Plays counter to our last move
-        elif prev_play == counter_moves.get(my_history[-1] if my_history else ""):
-            # If we played X last, Kris plays counter(X), so we play counter(counter(X))
-            last_move = my_history[-1] if my_history else random.choice(["R", "P", "S"])
-            kris_counter = counter_moves[last_move]
-            guess = counter_moves[kris_counter]
+# Filter books with at least 100 ratings
+book_counts = df_ratings['isbn'].value_counts()
+df_ratings = df_ratings[df_ratings['isbn'].isin(book_counts[book_counts >= 100].index)]
 
-        # Mrugesh: Plays counter to our most frequent move in last 10
-        elif len(my_history) >= 10:
-            our_most_frequent = most_frequent(my_history, 10)
-            mrugesh_counter = counter_moves[our_most_frequent]
-            # Play counter to Mrugesh's counter
-            guess = counter_moves[mrugesh_counter]
+# Merge ratings with book titles
+df = df_ratings.merge(df_books[['isbn', 'title']], on='isbn')
 
-        # Abbey: Tries to counter our patterns, so we mix strategies
-        else:
-            # Play counter to our most frequent move to confuse Abbey
-            our_most_frequent = most_frequent(my_history)
-            guess = counter_moves[our_most_frequent]
+# Create a pivot table of users vs. books with ratings as values
+pivot_table = df.pivot_table(index='title', columns='user', values='rating').fillna(0)
 
-    # Store our move
-    my_history.append(guess)
+# Convert to sparse matrix for efficiency
+sparse_matrix = csr_matrix(pivot_table.values)
 
-    return guess
+# Cell 5: Fit the KNN model
+model = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=6)
+model.fit(sparse_matrix)
+
+
+# Cell 6: Function to return recommended books
+def get_recommends(book=""):
+    # Check if the book exists in the dataset
+    if book not in pivot_table.index:
+        print(f"Book '{book}' not found in dataset")
+        return [book, []]
+
+    # Get the index of the book in the pivot table
+    book_idx = pivot_table.index.get_loc(book)
+
+    # Find the 6 nearest neighbors (including the book itself)
+    distances, indices = model.kneighbors(sparse_matrix[book_idx], n_neighbors=6)
+
+    # Prepare the list of recommended books with distances
+    recommended_books = []
+    for i in range(1, 6):  # Get top 5 neighbors (skip the book itself)
+        neighbor_idx = indices[0][i]
+        neighbor_title = pivot_table.index[neighbor_idx]
+        neighbor_distance = distances[0][i]
+        recommended_books.append([neighbor_title, float(neighbor_distance)])
+
+    # Sort by distance (descending) to match test case
+    recommended_books = sorted(recommended_books, key=lambda x: x[1], reverse=True)
+
+    # Debug: Print recommendations
+    print(f"Recommendations for '{book}': {recommended_books}")
+
+    return [book, recommended_books]
+
+
+# Cell 7: Test the function
+books = get_recommends("Where the Heart Is (Oprah's Book Club (Paperback))")
+print(books)
+
+
+# Cell 8: Test book recommendation
+def test_book_recommendation():
+    test_pass = True
+    recommends = get_recommends("Where the Heart Is (Oprah's Book Club (Paperback))")
+    if recommends[0] != "Where the Heart Is (Oprah's Book Club (Paperback))":
+        test_pass = False
+    recommended_books = ["I'll Be Seeing You", 'The Weight of Water', 'The Surgeon', 'I Know This Much Is True']
+    recommended_books_dist = [0.8, 0.77, 0.77, 0.77]
+    for i in range(2):  # Check only the first two books for exact matches
+        if recommends[1][i][0] not in recommended_books:
+            print(f"Book {recommends[1][i][0]} not in expected list: {recommended_books}")
+            test_pass = False
+        if abs(recommends[1][i][1] - recommended_books_dist[i]) >= 0.05:
+            print(
+                f"Distance {recommends[1][i][1]} for {recommends[1][i][0]} not within 0.05 of {recommended_books_dist[i]}")
+            test_pass = False
+    if test_pass:
+        print("You passed the challenge! 🎉🎉🎉🎉🎉")
+    else:
+        print("You haven't passed yet. Keep trying!")
+
+
+test_book_recommendation()
