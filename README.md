@@ -48,7 +48,7 @@ Example output for `get_recommends("The Queen of the Damned (Vampire Chronicles 
 * Libraries:
 
 * scikit-learn (for KNN with NearestNeighbors)
-* Pandas (for data preprocessing and manipulation)
+Pandas (for data preprocessing and manipulation)
 NumPy (for numerical operations)
 Matplotlib/Seaborn (optional, for dataset visualization)
 * Tools:
