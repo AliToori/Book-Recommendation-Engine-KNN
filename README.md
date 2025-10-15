@@ -84,14 +84,14 @@ Users.csv: Contains user information (User-ID, etc.)
     - Cell 6: Define the get_recommends function to return similar books.
     - Cell 7: Test the function with the provided test case.
 5. If the test fails, debug the get_recommends function by checking:
-    Data filtering logic (thresholds for users and books)
-    KNN model parameters (e.g., distance metric, number of neighbors)
-Handling of edge cases (e.g., book not found in dataset)
+    - Data filtering logic (thresholds for users and books)
+    - KNN model parameters (e.g., distance metric, number of neighbors)
+    - Handling of edge cases (e.g., book not found in dataset)
 ---
 
 ## Contributing
 Contributions are welcome! To contribute:
-1. Fork the repository (if you export the notebook to GitHub): https://github.com/AliToori/Cat-Dog-Image-Classifier
+1. Fork the repository (if you export the notebook to GitHub): https://github.com/AliToori/Book-Recommendation-Engine-KNN
 2. Create a feature branch (`git checkout -b feature-name`).
 3. Commit changes (`git commit -m "Add feature"`).
 4. Push to the branch (`git push origin feature-name`).
