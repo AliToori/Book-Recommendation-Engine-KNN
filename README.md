@@ -56,30 +56,25 @@ Example output for `get_recommends("The Queen of the Damned (Vampire Chronicles 
 ---
 
 ## 📂 Project Structure
-The project is a single Google Colab notebook (`Cat-Dog-Img-Classifier - fcc_cat_dog.ipynb`) with cells for:
-- Importing libraries (TensorFlow, Keras, etc.)
-- Downloading and setting up the cats_and_dogs dataset
-- Creating image generators (train, validation, test)
-- Defining and training the CNN model
-- Visualizing training metrics and test predictions
-- Testing accuracy against the challenge threshold (63%)
+The project is a single Google Colab notebook (fcc_book_recommendation_knn.ipynb) with cells for:
+* Importing libraries (scikit-learn, Pandas, etc.)
+* Loading and preprocessing the Book-Crossings dataset
+* Filtering users (<200 ratings) and books (<100 ratings)
+* Building the KNN model using NearestNeighbors
+* Defining the get_recommends function
+* Testing the model with the provided test cell
 
 Dataset structure:
 ```bash
-cats_and_dogs/
-├── train/
-│   ├── cats/ [cat.0.jpg, cat.1.jpg, ...]
-│   ├── dogs/ [dog.0.jpg, dog.1.jpg, ...]
-├── validation/
-│   ├── cats/ [cat.2000.jpg, cat.2001.jpg, ...]
-│   ├── dogs/ [dog.2000.jpg, dog.2001.jpg, ...]
-├── test/ [1.jpg, 2.jpg, ...]
+Books.csv: Contains book metadata (ISBN, title, etc.)
+Ratings.csv: Contains user ratings (User-ID, ISBN, rating)
+Users.csv: Contains user information (User-ID, etc.)
 ```
 
 ---
 
 ## Usage
-1. Open the provided Colab notebook: https://colab.research.google.com/github/freeCodeCamp/boilerplate-cat-and-dog-image-classifier/blob/master/fcc_cat_dog.ipynb
+1. Open the provided Colab notebook: https://colab.research.google.com/github/freeCodeCamp/boilerplate-book-recommendation-engine/blob/master/fcc_book_recommendation_knn.ipynb
 2. Save a copy to your Google Drive (**File > Save a copy in Drive**).
 3. Enable GPU for faster training (**Runtime > Change runtime type > GPU**).
 4. Run all cells sequentially:
