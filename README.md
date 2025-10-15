@@ -83,8 +83,10 @@ Users.csv: Contains user information (User-ID, etc.)
     - Cell 5: Create a pivot table of user-book ratings and fit the KNN model.
     - Cell 6: Define the get_recommends function to return similar books.
     - Cell 7: Test the function with the provided test case.
-5. If accuracy is low, adjust epochs (e.g., 20-30), batch size (e.g., 32), or model architecture (e.g., add Conv2D layers).
-
+5. If the test fails, debug the get_recommends function by checking:
+    - Data filtering logic (thresholds for users and books)
+    - KNN model parameters (e.g., distance metric, number of neighbors)
+    - Handling of edge cases (e.g., book not found in dataset)
 ---
 
 ## Contributing
